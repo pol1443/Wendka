@@ -33,49 +33,134 @@ namespace Wedka.Controllers
         {
             return View();
         }
+
+
+        [HttpPost]
+        public ActionResult Index(string tekst)
+        {
+            if (tekst == "")
+            {
+                return View();
+            }
+            List<PostModel> postyWszystkie = context.Post.ToList();
+            List<string> postyTematy = new List<string>();
+            List<string> postyTematyPom = new List<string>();
+            List<string> tematyZnalezione = new List<string>();
+            foreach (PostModel post in postyWszystkie)
+            {
+                postyTematy.Add(post.temat);
+                postyTematyPom.Add(post.temat);
+            }
+
+            foreach(string temat in postyTematyPom)
+            {
+                if (temat == tekst)
+                {
+                    tematyZnalezione.Add(temat);
+                    postyTematy.Remove(temat);
+                }
+            }
+            postyTematyPom = postyTematy;
+
+            foreach (string temat in postyTematyPom)
+            {
+                if (temat.Contains(tekst))
+                {
+                    tematyZnalezione.Add(temat);
+                }
+            }
+
+            TempData["tematy"] = tematyZnalezione;
+            return RedirectToAction("Posty");
+        }
+
+
         [HttpGet]
         public ActionResult Posty(string id)
         {
+
             List<PostModel> post = context.Post.ToList();
             List<PostyIndexModel> postKomList = new List<PostyIndexModel>();
             List<KomentarzModel> komentarzModels = context.Komentarz.ToList();
             List<KomentarzModel> komentarzModels2 = new List<KomentarzModel>();
             PostyIndexModel postIndexM = new PostyIndexModel();
+            List<string> tematy = new List<string>();
+            tematy = (List<string>)TempData["tematy"];
 
-            foreach (var i in post)
+            if (id == null && tematy != null)
             {
-                if (i.kategoria == id)
+                foreach (var i in post)
                 {
-                    postIndexM.post = i;
-                    postIndexM.userPost = UserManager.FindById(i.UserId);
-                    foreach(var j in komentarzModels)
+                    foreach(string temat in tematy)
                     {
-                        if (j.PostId == i.Id)
+                        if (i.temat == temat)
                         {
-                            komentarzModels2.Add(j);
+                            postIndexM.post = i;
+                            postIndexM.userPost = UserManager.FindById(i.UserId);
+                            foreach (var j in komentarzModels)
+                            {
+                                if (j.PostId == i.Id)
+                                {
+                                    komentarzModels2.Add(j);
+                                }
+                            }
+                            if (komentarzModels2.Count() != 0)
+                            {
+                                postIndexM.post.zdjecie1 = Convert.ToString(komentarzModels2.Count());
+                                postIndexM.komentarz = komentarzModels2.Last();
+                                postIndexM.userKomentarz = UserManager.FindById(komentarzModels2.Last().UserId);
+                                komentarzModels2.Clear();
+                            }
+                            else
+                            {
+                                postIndexM.post.zdjecie1 = "0";
+                                postIndexM.komentarz = new KomentarzModel();
+                                postIndexM.userKomentarz = new ApplicationUser();
+                            }
+
+                            postKomList.Add(new PostyIndexModel(postIndexM));
+
                         }
                     }
-                    if (komentarzModels2.Count() != 0)
+                   
+                }
+                TempData.Clear();
+            }
+            else
+            {
+                foreach (var i in post)
+                {
+                    if (i.kategoria == id)
                     {
-                        postIndexM.post.zdjecie1 = Convert.ToString(komentarzModels2.Count());
-                        postIndexM.komentarz = komentarzModels2.Last();
-                        postIndexM.userKomentarz = UserManager.FindById(komentarzModels2.Last().UserId);
-                        komentarzModels2.Clear();
+                        postIndexM.post = i;
+                        postIndexM.userPost = UserManager.FindById(i.UserId);
+                        foreach (var j in komentarzModels)
+                        {
+                            if (j.PostId == i.Id)
+                            {
+                                komentarzModels2.Add(j);
+                            }
+                        }
+                        if (komentarzModels2.Count() != 0)
+                        {
+                            postIndexM.post.zdjecie1 = Convert.ToString(komentarzModels2.Count());
+                            postIndexM.komentarz = komentarzModels2.Last();
+                            postIndexM.userKomentarz = UserManager.FindById(komentarzModels2.Last().UserId);
+                            komentarzModels2.Clear();
+                        }
+                        else
+                        {
+                            postIndexM.post.zdjecie1 = "0";
+                            postIndexM.komentarz = new KomentarzModel();
+                            postIndexM.userKomentarz = new ApplicationUser();
+                        }
+
+                        postKomList.Add(new PostyIndexModel(postIndexM));
+
                     }
-                    else
-                    {
-                        postIndexM.post.zdjecie1 = "0";
-                        postIndexM.komentarz =new KomentarzModel();
-                        postIndexM.userKomentarz = new ApplicationUser();
-                    }
-                    
-                    postKomList.Add(new PostyIndexModel(postIndexM));
 
                 }
-
             }
-
-
 
             return View(postKomList);
         }
