@@ -1,0 +1,151 @@
+﻿@model Wedka.Models.ApplicationUser
+
+@{
+    ViewBag.Title = "Twój profil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
+    <style>
+        .map {
+            height: 300px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body style="background:linear-gradient(to right,#bdc3c7, #2c3e50); background-repeat: no-repeat; background-attachment: fixed;">
+    <div style="padding-bottom: 20px"></div>
+    <div class="col-md-offset-1 col-md-10 container" style="padding-top:30px; padding-bottom: 30px; margin-top: 20px; background-color: #7f8a93; border-radius: 10px;">
+        <div class="row">
+            <div class="col-md-4">
+                <span class="profile-picture">
+                    <img src="@Html.DisplayFor(model => model.zdjecieProfilowe)" height="220" width="220" />
+                </span>
+
+                <div style="padding-bottom: 10px"></div>
+                <div class="row">
+
+                    <div class="col-md-6">
+                        @Html.ActionLink("Edycja", "Edit", null, new { @class = "btn btn-success btn-lg btn-block", id = Model.Id })
+                    </div>
+                    <div class="col-md-6" style="margin-left:0;">
+                        @Html.ActionLink("Mapa", "Create", "MapaModels", null, new { @class = "btn btn-success btn-lg btn-block", id = Model.Id })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" style="margin-left:0; margin-top:10px;">
+                        @Html.ActionLink("Posty", "MojePosty", null, new { @class = "btn btn-success btn-lg btn-block", id = Model.Id })
+                    </div>
+                </div>
+            </div>
+
+                <div class="col-md-8">
+
+
+
+
+
+                    <div class="profile-user-info">
+                        <div style="font-weight: bold; font-size: 18px;" class="profile-info-row">
+                            <hr style="width: 90%; text-align:left; margin-left: 0; margin-top: 5px; margin-bottom: 5px; height:2px;border-width:0;color:gray;background-color:black">
+                            <div style="margin: 15px 15px 15px 15px;" class="profile-info-name"> Nick: @Html.DisplayFor(model => model.nazwaUzytkownika)</div>
+                            <hr style="width: 90%; text-align: left; margin-left: 0; margin-top: 5px; margin-bottom: 5px; height: 2px; border-width: 0; color: gray; background-color: black">
+
+                            <div style="margin: 15px 15px 15px 15px;" class="profile-info-row">Email: <strong>@Html.DisplayFor(model => model.UserName)</strong></div>
+                            <hr style="width: 90%; text-align: left; margin-left: 0; margin-top: 5px; margin-bottom: 5px; height: 2px; border-width: 0; color: gray; background-color: black">
+
+                            <div style="margin: 15px 15px 15px 15px;" class="profile-info-name"> Konto założone: @Html.DisplayFor(model => model.zalozenie) </div>
+                            <hr style="width: 90%; text-align: left; margin-left: 0; margin-top: 5px; margin-bottom: 5px; height: 2px; border-width: 0; color: gray; background-color: black">
+
+                            <div style="margin: 15px 15px 15px 15px;" class="profile-info-name"> Cytat: <span style="font-style: italic; color: black">@Html.DisplayFor(model => model.Cytat)</span></div>
+                            <hr style="width: 90%; text-align: left; margin-left: 0; margin-top: 5px; margin-bottom: 5px; height: 2px; border-width: 0; color: gray; background-color: black">
+                        </div>
+                    </div>
+
+                    <div class="hr hr-8 dotted"></div>
+
+                    <div class="profile-user-info">
+
+                    </div>
+                </div>
+                @*<div class="col-xs-12 col-sm-3">
+            <div id="map" class="map" style="visibility:hidden"></div>
+        </div>*@
+            </div>
+
+        <div style="padding-bottom: 10px"></div>
+
+                    <div class="col-md-10">
+                        <div class="widget-main">
+                            @Html.Raw(Model.opis)
+                            @Html.TextBoxFor(model => model.dlugosc, new { @Id = "lokal", @type = "hidden" })
+                            @Html.TextBoxFor(model => model.szerokosc, new { @Id = "lokal2", @type = "hidden" })
+                        </div>
+                    </div>
+                </div>
+        @*<div class="row justify-content-md-center">
+            <div id="wrapper">
+                <button id="location-button" class="btn btn-dark">Moja Lokacja</button>
+
+
+            </div>
+        </div>*@
+        <div style="padding-top: 10px"></div>
+
+
+    @*<script>
+            $('#location-button').click(function () {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function (position) {
+                        console.log(position);
+                        $.get("https://api.opencagedata.com/geocode/v1/json?q=" + position.coords.latitude + "+" + position.coords.longitude + "&key=01b66c73f2c34ffead7cda855a5f18a0", function (data) {
+                            console.log(data);
+                            var lat = position.coords.latitude;
+
+                            var long = position.coords.longitude;
+
+
+                            var butto = document.getElementById('location-button')
+                            butto.style.visibility = "hidden"
+
+
+                            var x = document.getElementById("map");
+                            if (x.style.visibility === "hidden") {
+                                x.style.visibility = "visible";
+                            } else {
+                                x.style.display = "hidden";
+                            }
+
+                            var map = new ol.Map({
+                                target: 'map',
+                                layers: [
+                                    new ol.layer.Tile({
+                                        source: new ol.source.OSM()
+                                    })
+                                ],
+                                view: new ol.View({
+
+                                    center: ol.proj.fromLonLat([long, lat]),
+                                    zoom: 13
+                                })
+                            });
+                        })
+
+
+                    });
+                }
+            });
+
+        </script>*@
+    @*<p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>*@
+</body>
+</html>
+

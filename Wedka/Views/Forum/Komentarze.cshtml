@@ -1,0 +1,161 @@
+﻿@using Wedka.Models
+@model Wedka.Models.KomentarzeListModel
+
+@{
+    ViewBag.Title = "Komentarze";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    //PostKom i = Model.Last();
+    //var x = 0;
+
+}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="../Account/styles.css">
+    <script src="https://cdn.tiny.cloud/1/5uoztlu0whrkpv153g5zmfz0ajoabba13mskozg1l1qi4isp/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+
+    @Scripts.Render("~/bundles/jquery")
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            menubar: false,
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste code help wordcount',
+                'image code'
+            ],
+            toolbar: 'undo redo | formatselect | ' +
+                'bold italic backcolor | alignleft aligncenter ' +
+                'alignright alignjustify | bullist numlist outdent indent | ' +
+                'link image | removeformat | help',
+            image_title: true,
+            automatic_uploads: true,
+            file_picker_types: 'image',
+            file_picker_callback: function (cb, value, meta) {
+                var input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+
+                /*
+                  Note: In modern browsers input[type="file"] is functional without
+                  even adding it to the DOM, but that might not be the case in some older
+                  or quirky browsers like IE, so you might want to add it to the DOM
+                  just in case, and visually hide it. And do not forget do remove it
+                  once you do not need it anymore.
+                */
+
+                input.onchange = function () {
+                    var file = this.files[0];
+
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        /*
+                          Note: Now we need to register the blob in TinyMCEs image blob
+                          registry. In the next release this part hopefully won't be
+                          necessary, as we are looking to handle it internally.
+                        */
+                        var id = 'blobid' + (new Date()).getTime();
+                        var blobCache = tinymce.activeEditor.editorUpload.blobCache;
+                        var base64 = reader.result.split(',')[1];
+                        var blobInfo = blobCache.create(id, file, base64);
+                        blobCache.add(blobInfo);
+
+                        /* call the callback and populate the Title field with the file name */
+                        cb(blobInfo.blobUri(), { title: file.name });
+                    };
+                    reader.readAsDataURL(file);
+                };
+
+                input.click();
+            },
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px}'
+        });
+    </script>
+
+    <style>
+        .map {
+            height: 200px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body style="background:linear-gradient(to right,#bdc3c7, #2c3e50); background-repeat: no-repeat; background-attachment: fixed;">
+    <div class="container" style="margin-top: 20px;">
+        <div class="be-comment-block" style="border: 3px solid transparent;">
+
+            <div style="width: 60px;height: 60px;margin: 25px 15px 20px 15px;" class="col-md-2">
+                <img style="border-radius: 50%;width: 60px; height: 60px;" src="@Html.DisplayFor(model => model.userPost.zdjecieProfilowe)" alt="" class="be-ava-comment">
+                <div>
+                    <span>
+                        
+                                        @Html.ActionLink(Model.userPost.nazwaUzytkownika, "Podglad", "Account", new { id = Model.userPost.Id}, null)
+                                    </span>
+                </div>
+            </div>
+            <div style="border-radius: 10px; background-color: #bdc3c7; margin: 15px 15px 0px 15px;" class="col-md-10">
+                <span class="be-comment-time" style="">
+                    <span style="font-size: 16px; font-weight: bold;">Temat: @Model.post.temat </span>
+                    <i style="font-size: 16px;float: right" class="fa fa-clock-o">@Html.Display(Convert.ToString(Model.post.kiedyNapisane))</i>
+                </span>
+            </div>
+            <div class="col-md-10" style="margin: 0px 15px 0px 15px; padding: 10px; border-radius: 10px; background-color: #7f8a93">
+                <div class="be-comment-content">
+                    <p class="be-comment-text">
+                        @Html.Raw(Model.post.post)
+                    </p>
+                </div>
+            </div>
+
+            @if (Model.komentarzeIuser != null)
+            {
+
+
+                foreach (var item in Model.komentarzeIuser)
+                {
+                    <div style="width: 60px; height: 60px; margin: 25px 15px 20px 15px;" class="col-md-2">
+                        <img style="border-radius: 50%; width: 60px; height: 60px;" src="@Html.DisplayFor(model=>item.userKomentarz.zdjecieProfilowe)" alt="" class="be-ava-comment">
+                        <div class="be-comment-name" style="color: black; float: left">
+                            <span style="">
+                                @Html.ActionLink(item.userKomentarz.nazwaUzytkownika, "Podglad", "Account", new { id = item.komentarz.UserId },null)
+                            </span>
+                        </div>
+                    </div>
+                    <div style="border-radius: 10px; background-color: #bdc3c7; margin: 15px 15px 0px 15px;" class="col-md-10">
+                        <span class="be-comment-time" style="">
+                            <span style="font-size: 16px; font-weight: bold;">Re: @Model.post.temat </span>
+                            <i style="font-size: 16px; float: right" class="fa fa-clock-o">@Html.Display(Convert.ToString(item.komentarz.kiedyNapisane))</i>
+                        </span>
+                    </div>
+                    <div class="col-md-10" style="margin: 0px 15px 15px 15px; padding: 10px; border-radius: 10px; background-color: #7f8a93">
+                        <div class="be-comment-content">
+                            <p class="be-comment-text">
+                                @Html.Raw(item.komentarz.komentarze)
+                            </p>
+                        </div>
+                    </div>
+
+                }
+            }
+            <div class="col-md-1" style="margin: 12px"><span><br /><br /><br /></span></div>
+            @using (Html.BeginForm())
+            {
+                <div class="col-md-10" style="text-align: center; ">
+                    <input style="display:none" type="text" name="PostId" value="@Model.post.Id" />
+                    <textarea style="resize:none; margin: 15px 0px 0px 0px;" cols="700" rows="4" name="komentarze"></textarea>
+                    <br />
+                    <div class="form-group">
+                        <div>
+                            <input style="margin-top:10px; padding:10px;" type="submit" value="Dodaj" class="btn btn-success" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

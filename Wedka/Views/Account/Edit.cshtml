@@ -1,0 +1,230 @@
+﻿@model Wedka.Models.ApplicationUser
+@{
+    ViewBag.Title = "Edycja";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
+
+    @Scripts.Render("~/bundles/jquery")
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script type="text/javascript">
+        tinymce.init({ selector: 'textarea', width: 700, height: 300 });
+    </script>
+
+    <style>
+        .map {
+            height: 300px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body style="background:linear-gradient(to right,#bdc3c7, #2c3e50); background-repeat: no-repeat; background-attachment: fixed;">
+    <h1 style="color:white; text-align:center">EDYCJA PROFILU</h1>
+<div class="col-md-offset-1 col-md-10 container" style="background-color: #7f8a93; color: black; border-radius: 10px;">
+    <div style="margin-left: 15px;">
+    @using (Html.BeginForm("Edit", "Account", FormMethod.Post, new {@class = "form-horizontal", role = "form", enctype = "multipart/form-data"}))
+    {
+        @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+
+        <div class="form-group" style="margin-top: 30px; margin-left: 0px">
+            <div class="col-md-1"><h5>Cytat: </h5></div>
+
+            <div class="col-md-10">
+
+                @Html.TextBoxFor(model => model.Cytat, new {@class = "form-control", @maxlength = "150"})
+                @Html.ValidationMessageFor(model => model.Cytat, "", new {@class = "text-danger"})
+            </div>
+        </div>
+
+
+
+        <div class="form-group" style="margin: 0">
+            <div class="col-md-1"><h5>Nick: </h5></div>
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.nazwaUzytkownika, new {@class = "form-control"})
+                @Html.ValidationMessageFor(model => model.nazwaUzytkownika, "", new {@class = "text-danger"})
+            </div>
+        </div>
+
+        <div class="form-group" style="margin: 0">
+            <div style="margin-top: 5px; margin-right: 0;" class="col-md-3"><h5>Zdjęcie profilowe:</h5></div>
+            <div style="margin-top: 10px;" class="col-md-5">
+                <input name="files" type="file" id="fileName" accept=".jpg,.jpeg,.png" onchange="validateFileType()"/>
+                <script type="text/javascript">
+                    function validateFileType() {
+                        var fileName = document.getElementById("fileName").value;
+                        var idxDot = fileName.lastIndexOf(".") + 1;
+                        var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+                        if (extFile == "jpg" || extFile == "jpeg" || extFile == "png") {
+
+                        } else {
+                            document.getElementById("fileName").value == null;
+                            alert("Tylko jpg, jpeg, png");
+                        }
+                    }
+                </script>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin: 0">
+            <div class="col-md-1"><h5>Opis: </h5></div>
+            <div class="col-md-12">
+                @Html.TextAreaFor(model => model.opis, new {@class = "form-control", @maxlength = "500"})
+                @Html.ValidationMessageFor(model => model.opis, "", new {@class = "text-danger"})
+            </div>
+        </div>
+
+        <label id="lokalizacja" style="visibility: hidden">test</label>
+        <label id="lokalizacja2" style="visibility: hidden">test</label>
+
+
+        <div class="form-group">
+            <div class="col-md-offset-5 col-md-2">
+                @Html.TextBoxFor(model => model.zdjecieProfilowe, new {@class = "form-control", @Id = "sciezkaa", @type = "hidden"})
+                <input type="submit" value="Zapisz" class="btn btn-success"/>
+            </div>
+        </div>
+    }
+    </div>
+
+
+
+    @*<button id="location-button">Dodaj Lokalizacje</button>
+
+            <div id="map" class="map" style="visibility:hidden"></div>
+
+            <div id="output"></div>*@
+
+</div>
+    <div style="padding-top:20px"></div>
+</body>
+@*<script>
+        $('#location-button').click(function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    console.log(position);
+                    $.get("https://api.opencagedata.com/geocode/v1/json?q=" + position.coords.latitude + "+" + position.coords.longitude + "&key=01b66c73f2c34ffead7cda855a5f18a0", function (data) {
+                        console.log(data);
+                        var lat = position.coords.latitude;
+                        var lat2 = lat.toString()
+                        lat2 = lat2.replace(".", ',')
+                        var long = position.coords.longitude;
+                        var long2 = long.toString()
+                        long2 = long2.replace(".", ',')
+                        document.getElementById('lokalizacja').innerHTML = position.coords.latitude;
+                        document.getElementById('lokalizacja2').innerHTML = position.coords.longitude;
+                        document.getElementById('lokal').value = long2;
+                        document.getElementById('lokal2').value = lat2;
+
+                        var butto = document.getElementById('location-button')
+                        butto.style.visibility = "hidden"
+
+                        sleep(500);
+                        var x = document.getElementById("map");
+                        if (x.style.visibility === "hidden") {
+                            x.style.visibility = "visible";
+                        } else {
+                            x.style.display = "hidden";
+                        }
+
+                        console.log(lat);
+                        console.log(long);
+
+                        var map = new ol.Map({
+                            target: 'map',
+                            layers: [
+                                new ol.layer.Tile({
+                                    source: new ol.source.OSM()
+                                })
+                            ],
+                            view: new ol.View({
+
+                                center: ol.proj.fromLonLat([long, lat]),
+                                zoom: 13
+                            })
+                        });
+                    })
+
+
+                });
+            }
+        });
+
+    </script>*@
+
+
+<script type="text/javascript">
+
+    $(function () {
+        $('#fileName').on('change', function () {
+            var filePath = $(this).val();
+            filePath = filePath.replace("C:\\fakepath\\", '\\images\\');
+            console.log(filePath);
+            document.getElementById('sciezkaa').value = filePath;
+        });
+    });
+
+</script>
+
+
+@*<script>
+        function sleep(milliseconds) {
+            const date = Date.now();
+            let currentDate = null;
+            do {
+                currentDate = Date.now();
+            } while (currentDate - date < milliseconds);
+        }
+    </script>*@
+
+
+
+<script>
+    $(document).ready(function () {
+        (function (document) {
+            var input = document.getElementById("files"),
+                output = document.getElementById("zdjecie2"),
+
+                fileData; // We need fileData to be visible to getBuffer.
+
+            // Eventhandler for file input.
+            function openfile(evt) {
+                var files = input.files;
+                // Pass the file to the blob, not the input[0].
+                fileData = new Blob([files[0]]);
+                // Pass getBuffer to promise.
+                var promise = new Promise(getBuffer);
+                // Wait for promise to be resolved, or log error.
+                promise.then(function (data) {
+                    // Here you can pass the bytes to another function.
+                    output.value = data.toString();
+                    console.log(data);
+                }).catch(function (err) {
+                    console.log('Error: ', err);
+                });
+            }
+
+            /*
+              Create a function which will be passed to the promise
+              and resolve it when FileReader has finished loading the file.
+            */
+            function getBuffer(resolve) {
+                var reader = new FileReader();
+                reader.readAsArrayBuffer(fileData);
+                reader.onload = function () {
+                    var arrayBuffer = reader.result
+                    var bytes = new Uint8Array(arrayBuffer);
+                    resolve(bytes);
+                }
+            }
+
+            // Eventlistener for file input.
+            input.addEventListener('change', openfile, false);
+        }(document));
+    });
+</script>

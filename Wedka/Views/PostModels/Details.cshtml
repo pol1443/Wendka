@@ -1,0 +1,99 @@
+﻿@model Wedka.Models.PostModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>PostModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.kiedyNapisane)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.kiedyNapisane)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.post)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.post)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.kategoria)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.kategoria)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.zdjecie1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.zdjecie1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.zdjecie2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.zdjecie2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.zdjecie3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.zdjecie3)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.zdjecie4)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.zdjecie4)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.iloscKom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.iloscKom)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.temat)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.temat)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

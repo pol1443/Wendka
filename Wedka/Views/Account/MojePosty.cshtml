@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Wedka.Models.PostModel>
+
+@{
+    ViewBag.Title = "MojePosty";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<body style="        background: linear-gradient(to right,#bdc3c7, #dbd5d5); background-repeat: no-repeat; background-attachment: fixed;">
+    <h2>MojePosty</h2>
+
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.kiedyNapisane)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.kategoria)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.temat)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.kiedyNapisane)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.kategoria)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.temat)
+                </td>
+                <td>
+                    @Html.ActionLink("Edycja", "EdytujPost","Forum", new { id = item.Id },null) |
+                    @Html.ActionLink("Szczegóły", "Komentarze", "Forum",new { id = item.Id },null) |
+                    @Html.ActionLink("Usuń", "Delete","PostModels", new { id = item.Id },null)
+                </td>
+            </tr>
+        }
+
+    </table>
+    </body>

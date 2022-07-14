@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Wedka.Models.PostyIndexModel>
+
+@{
+    ViewBag.Title = "Posty";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2></h2>
+
+
+
+@{
+    ViewBag.Title = "Forum";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<body style="background:linear-gradient(to right,#bdc3c7, #2c3e50); background-repeat: no-repeat; background-attachment: fixed;">
+    <div style="margin-top: 50px;margin-bottom: 20px" class="col-md-offset-1 col-md-10">
+
+
+        Temat:<input class="form-control" type="text" value="" style="margin-top: 5px;" />
+        <input type="submit" class="btn btn-info" value="Szukaj" style="margin-top: 5px;margin-bottom: 5px" />
+
+
+
+        <div style="border-radius: 10px; background-color: #bdc3c7;">
+            <div style="border-top-left-radius: 10px; border-bottom-left-radius: 10px; background-color: #bdc3c7;" class="col-md-6">
+                <h6>Forum</h6>
+            </div>
+
+            <div style="background-color: #bdc3c7;" class="col-md-2">
+                <h6>Statystyki</h6>
+            </div>
+
+            <div style="border-top-right-radius: 10px;border-bottom-right-radius: 10px; background-color: #bdc3c7;" class="col-md-4">
+                <h6>Ostatnia</h6>
+            </div>
+        </div>
+        <hr style="width: 100%; text-align: left; margin-left: 0; margin-top: 40px; margin-bottom: 0px; height: 2px; border-width: 0; color: gray; background-color: black">
+        @foreach (var item in Model)
+        {
+            <div style="margin-top: 10px;">
+                <div style="border-top-left-radius: 10px; border-bottom-left-radius: 10px; background-color: #7f8a93; padding-top: 20px; padding-bottom:5px " class="col-md-6">
+                    <a href="@Url.Action("Komentarze", new {item.post.Id})" style="color:black; text-decoration:none">  @item.post.temat</a><br><span>autor: @Html.DisplayFor(modelItem => item.userPost.nazwaUzytkownika)</span><br> <span>Data @Html.DisplayFor(modelItem => item.post.kiedyNapisane)</span>
+                </div>
+
+                <div style="background-color: #7f8a93; padding-top: 10px; padding-bottom: 45px;" class="col-md-2" class="col-md-2">
+                    <p>Odpowiedzi: @item.post.zdjecie1</p>
+                </div>
+
+                <div style="border-top-right-radius: 10px;border-bottom-right-radius: 10px; background-color: #7f8a93;padding-top: 10px; padding-bottom: 15px;" class="col-md-4">
+                    <p>Autor: @item.userKomentarz.nazwaUzytkownika</p>
+                    @if (item.komentarz.kiedyNapisane == DateTime.MinValue)
+                    {
+                        <p>Data:</p>
+                    }
+                    else
+                    {
+                        <p>Data: @item.komentarz.kiedyNapisane</p>
+                    }
+
+                </div>
+            </div>
+            <hr style="width: 100%; text-align: left; margin-left: 0; margin-top: 120px; margin-bottom: 5px; height: 2px; border-width: 0; color: gray; background-color: black">
+        }
+
+    </div>
+
+</body>
+
