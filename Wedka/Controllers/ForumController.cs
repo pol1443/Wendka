@@ -31,7 +31,31 @@ namespace Wedka.Controllers
         // GET: Forum
         public ActionResult Index()
         {
-            return View();
+            List<StatystykiKategoriModel> statystykiKategoriList = new List<StatystykiKategoriModel>();
+            StatystykiKategoriModel statystykiKategori = new StatystykiKategoriModel();
+            List<PostModel> wszystkiePosty = context.Post.ToList();
+            List<KomentarzModel> wszystkieKomentarze = context.Komentarz.ToList();
+            List<string>kategorie= wszystkiePosty.Select(x => x.kategoria).Distinct().ToList();
+
+
+            for (int i =0;i< kategorie.Count();i++)
+            {
+                statystykiKategori.nazwaKategori = kategorie[i];
+                statystykiKategori.iloscPosty = wszystkiePosty.Where(x => x.kategoria == kategorie[i]).Count();
+                statystykiKategori.iloscOdpowiedzi = 0;
+                foreach (PostModel post in wszystkiePosty.Where(x => x.kategoria == kategorie[i]))
+                {
+                    statystykiKategori.iloscOdpowiedzi += wszystkieKomentarze.Where(x => x.PostId == post.Id).Count();
+                }
+                statystykiKategori.ostatniAutor = UserManager.FindById(wszystkiePosty.Where(x => x.kategoria == kategorie[i]).Last().UserId).nazwaUzytkownika;
+                statystykiKategori.ostatniaData = wszystkiePosty.Where(x => x.kategoria == kategorie[i]).Last().kiedyNapisane;
+                statystykiKategori.ostatniTemat = wszystkiePosty.Where(x => x.kategoria == kategorie[i]).Last().temat;
+                statystykiKategoriList.Add(new StatystykiKategoriModel(statystykiKategori));
+            }
+
+
+
+            return View(statystykiKategoriList);
         }
 
 
@@ -46,31 +70,40 @@ namespace Wedka.Controllers
             List<string> postyTematy = new List<string>();
             List<string> postyTematyPom = new List<string>();
             List<string> tematyZnalezione = new List<string>();
+            string[] slowa = tekst.Split(' ');
+
             foreach (PostModel post in postyWszystkie)
             {
                 postyTematy.Add(post.temat);
                 postyTematyPom.Add(post.temat);
             }
 
-            foreach(string temat in postyTematyPom)
+            foreach (string temat in postyTematyPom)
             {
-                if (temat == tekst)
+                if (temat.Contains(tekst))
                 {
                     tematyZnalezione.Add(temat);
                     postyTematy.Remove(temat);
                 }
             }
             postyTematyPom = postyTematy;
-
-            foreach (string temat in postyTematyPom)
+            foreach (string slowo in slowa) 
             {
-                if (temat.Contains(tekst))
+                
+                for(int i = 0; i < postyTematyPom.Count; i++)
                 {
-                    tematyZnalezione.Add(temat);
+                    if (postyTematyPom[i].Contains(slowo))
+                    {
+                        tematyZnalezione.Add(postyTematyPom[i]);
+                        postyTematy.Remove(postyTematyPom[i]);
+                    }
                 }
+                postyTematyPom = postyTematy;
             }
 
-            TempData["tematy"] = tematyZnalezione;
+
+
+                TempData["tematy"] = tematyZnalezione;
             return RedirectToAction("Posty");
         }
 

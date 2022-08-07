@@ -1,4 +1,5 @@
 ﻿
+@model IEnumerable<Wedka.Models.StatystykiKategoriModel>
 @{
     ViewBag.Title = "Forum";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -33,25 +34,61 @@
         </div>
         <hr style="width: 100%; text-align: left; margin-left: 0; margin-top: 40px; margin-bottom: 0px; height: 2px; border-width: 0; color: gray; background-color: black">
 
-        <div style="margin-top: 10px;">
-            <div style="border-top-left-radius: 10px; border-bottom-left-radius: 10px; background-color: #7f8a93; padding-top: 20px; padding-bottom:41px " class="col-md-6">
-                <h4><a style="text-decoration: none;color: black" href="/Forum/Posty/Zasady">Zasady obowiązujące na forum</a></h4>
-            </div>
+       @foreach(var item in Model)
+            {
 
-            <div style="background-color: #7f8a93; padding-top: 10px; padding-bottom: 30px;" class="col-md-2" class="col-md-2">
-                <p>Posty: 1</p>
-                <p>Odpowiedzi:0</p>
-            </div>
+            
 
-            <div style="border-top-right-radius: 10px;border-bottom-right-radius: 10px; background-color: #7f8a93;padding-top: 10px; padding-bottom: 0px;" class="col-md-4">
-                <p>Posty: Regulamin</p>
-                <p>Autor: Admin</p>
-                <p>Data: 04.09.2020 14:23</p>
-            </div>
-        </div>
-        <hr style="width: 100%; text-align: left; margin-left: 0; margin-top: 120px; margin-bottom: 5px; height: 2px; border-width: 0; color: gray; background-color: black">
+                <div style="margin-top: 10px;">
 
-        <div style="margin-top: 10px;">
+                @if (item.nazwaKategori == "Zasady")
+                {
+                     <div style="border-top-left-radius: 10px; border-bottom-left-radius: 10px; background-color: #7f8a93; padding-top: 20px; padding-bottom:41px " class="col-md-6">
+                     <h4><a style="text-decoration: none;color: black" href="/Forum/Posty/Zasady">Zasady obowiązujące na forum</a></h4>
+                     </div>
+                }
+
+                @if(item.nazwaKategori == "Ogólne")               
+                {
+
+                     <div style="border-top-left-radius: 10px; border-bottom-left-radius: 10px; background-color: #7f8a93; padding-top: 20px; padding-bottom:41px " class="col-md-6">
+                     <h4><a style="text-decoration: none;color: black" href="/Forum/Posty/Ogólne">Ogólne</a></h4>
+                     </div>
+                }
+
+                @if(item.nazwaKategori == "Wędkarstwo")               
+                {
+
+                <div style="border-top-left-radius: 10px; border-bottom-left-radius: 10px; background-color: #7f8a93; padding-top: 20px; padding-bottom:41px " class="col-md-6">
+                    <h4><a style="text-decoration: none;color: black" href="/Forum/Posty/Wędkarstwo">Wędkarstwo</a></h4>
+                </div>
+                }
+
+               @if(item.nazwaKategori == "Różne")               
+                {
+
+                     <div style="border-top-left-radius: 10px; border-bottom-left-radius: 10px; background-color: #7f8a93; padding-top: 20px; padding-bottom:41px " class="col-md-6">
+                     <h4><a style="text-decoration: none;color: black" href="/Forum/Posty/Różne">Różne</a></h4>
+                     </div>
+                }
+
+
+                <div style="background-color: #7f8a93; padding-top: 10px; padding-bottom: 30px;" class="col-md-2" class="col-md-2">
+                    <p>Posty: @item.iloscPosty</p>
+                    <p>Odpowiedzi: @item.iloscOdpowiedzi</p>
+                </div>
+
+                <div style="border-top-right-radius: 10px;border-bottom-right-radius: 10px; background-color: #7f8a93;padding-top: 10px; padding-bottom: 0px;" class="col-md-4">
+                    <p>Posty: @item.ostatniTemat</p>
+                    <p>Autor: @item.ostatniAutor</p>
+                    <p>Data: @item.ostatniaData</p>
+                </div>
+            </div>
+            <hr style="width: 100%; text-align: left; margin-left: 0; margin-top: 120px; margin-bottom: 5px; height: 2px; border-width: 0; color: gray; background-color: black">
+
+                }
+
+        @*<div style="margin-top: 10px;">
             <div style="border-top-left-radius: 10px; border-bottom-left-radius: 10px; background-color: #7f8a93; padding-top: 20px; padding-bottom:41px " class="col-md-6">
                 <h4><a style="text-decoration: none;color: black" href="/Forum/Posty/Wędkarstwo">Wędkarstwo</a></h4>
             </div>
@@ -102,7 +139,7 @@
                 <p>Data: 10.07.2020 16:37</p>
             </div>
         </div>
-        <hr style="width: 100%; text-align: left; margin-left: 0; margin-top: 120px; margin-bottom: 5px; height: 2px; border-width: 0; color: gray; background-color: black">
+        <hr style="width: 100%; text-align: left; margin-left: 0; margin-top: 120px; margin-bottom: 5px; height: 2px; border-width: 0; color: gray; background-color: black">*@
 
         <form action="https://localhost:44366/Forum/Dodajpost">
             <div class="form-group">

@@ -35,4 +35,29 @@ namespace Wedka.Models
         public virtual ICollection<KomentarzModel> KomentarzModel { get; set; }
 
     }
+
+    public class StatystykiKategoriModel
+    {
+        public string nazwaKategori { get; set; }
+        public int iloscPosty { get; set; }
+        public int iloscOdpowiedzi { get; set; }
+        public string ostatniTemat { get; set; }
+        public string ostatniAutor { get; set; }
+        public DateTime ostatniaData { get; set; }
+
+        public StatystykiKategoriModel()
+        {
+
+        }
+        public StatystykiKategoriModel(StatystykiKategoriModel a)
+        {
+            this.nazwaKategori = a.nazwaKategori;
+            this.iloscPosty = a.iloscPosty;
+            this.iloscOdpowiedzi = a.iloscOdpowiedzi;
+            this.ostatniTemat = a.ostatniTemat;
+            this.ostatniAutor = a.ostatniAutor;
+            this.ostatniaData = a.ostatniaData;
+        }
+
+    }
 }
